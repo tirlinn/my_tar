@@ -27,7 +27,7 @@ int main (int argc, char** argv)
     else (argv[i][0] != '-')
     {
       archive_files malloc(sizeof(char));
-      archive_files[k] = argv[i];
+      archive_files[k++] = argv[i];
     }
 
     if (check == 0)

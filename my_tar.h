@@ -4,6 +4,16 @@
 #include <unistd.h>
 #include <grp.h>
 #include <pwd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+
+int my_strlen(char* p1)
+{
+    int i = 0;
+    while(p1[i++] != '\0');
+    return --i;
+}
 
 void my_strcpy(char* p1, char* p2)
 {

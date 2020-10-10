@@ -17,7 +17,7 @@ struct posix_header
     char devminor[8];             /* 337 */ minor
     char prefix[155];             /* 345 */ Name after 100 chars
         /* 500 */ 12 empty bytes
-};
+}
 
 write(2) 	+
 malloc(3)	+
@@ -43,7 +43,7 @@ readlink	+- to read the content of the symbolic link
 unlink(2) +- to delete the link
 time 		  +- returns current time in seconds //time_t time( time_t *second )
 ctime 		+- returns Www Mmm dd hh:mm:ss yyyy time as string //char *ctime(const time_t *timer)
-utime 		+- changes modified time to the current time if times is NULL //int utime(const char *filename, const struct utimbuf *times); 
+utime 		+- changes modified time to the current time if times is NULL //int utime(const char *filename, const struct utimbuf *times);
 
 
 -c create

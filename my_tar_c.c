@@ -1,5 +1,4 @@
-#include <stdio.h> 
-#include <fcntl.h> 
+#include "my_tar.h"
 
 void archive_end (int fd_file_f)
 {
@@ -9,16 +8,11 @@ void archive_end (int fd_file_f)
     }
 }
 
-int write_file ( char* file_f, char* archive_file )
-{
-    int fd_archive_file = open ( archive_file, O_RDONLY );
-}
-
 int my_tar_c (char* file_f, char** archive_files)
 {
     int fd_file_f = open( file_f , O_WRONLY | O_CREAT | O_TRUNC );
 
-    for (int i = 0; i < (sizeof(archive_files) / sizeof(archive_files[0])); i++)
+    for (int i = 0; i < (sizeof(archive_files) / sizeof(archive_files[0])); i++) // sizeof / sizeof change for number of files to archive
     {
         write_file( fd_file_f, archive_files[i] );
     }
@@ -31,8 +25,7 @@ int my_tar_c (char* file_f, char** archive_files)
 
 int main()
 {
-    char** a = malloc(sizeof());
-    
-    my_tar_c("test", {"a","h"});
+    char* arr[10] = { "a" };
+    my_tar_c("test", arr);
     return 0;
 }
