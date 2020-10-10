@@ -6,7 +6,7 @@
 #include <pwd.h>
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <sys/sysmacros.h>
 
 int my_strlen(char* p1)
 {

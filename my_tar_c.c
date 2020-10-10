@@ -1,11 +1,12 @@
 #include "my_tar.h"
 
-void archive_end (int fd_file_f)
+int write_null (int fd_file_f, int size)
 {
-    for (int i = 0; i < 1024; i++)
-    {
-        write(fd_file_f, "", 1);
-    }
+    char test[size];
+    for(int i = 0; i < size; i++)
+        test[i] = '\0';
+    write(fd_file_f, test, size);
+    return 0;
 }
 
 int my_tar_c (char* file_f, char** archive_files)
@@ -17,7 +18,7 @@ int my_tar_c (char* file_f, char** archive_files)
         write_file( fd_file_f, archive_files[i] );
     }
 
-    archive_end(fd_file_f);
+    write_null(fd_file_f, 1024);
 
     close( fd_file_f );
     return 0;
