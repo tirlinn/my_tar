@@ -70,85 +70,80 @@ int check_sum(struct posix_header file_header)
     return count;
 }
 
-int get_file_header(int fd_archive_file, char* archive_file, struct posix_header file_header)
+int get_file_header(int fd_archive_file, char* archive_file, struct posix_header *file_header)
 {
     struct stat file_stat;
 
     fstat(fd_archive_file, &file_stat);
 
-    my_strcpy(file_header.name, archive_file);
+    my_strcpy(file_header->name, archive_file);
 
-    my_itoa(file_header.mode, file_stat.st_mode, 8, 1);
-    file_header.mode[0] = '0';
-    if (my_strlen(file_header.mode) == 6)
-        file_header.mode[1] = '0';
+    my_itoa(file_header->mode, file_stat.st_mode, 8, 1);
+    file_header->mode[0] = '0';
+    if (my_strlen(file_header->mode) == 6)
+        file_header->mode[1] = '0';
 
-    my_itoa(file_header.uid, file_stat.st_uid, 10, 1);
-    my_itoa(file_header.gid, file_stat.st_gid, 10, 1);
-    my_itoa(file_header.size, file_stat.st_size, 10, 1);
-    my_itoa(file_header.mtime, file_stat.st_mtime, 10, 1);
+    my_itoa(file_header->uid, file_stat.st_uid, 10, 1);
+    my_itoa(file_header->gid, file_stat.st_gid, 10, 1);
+    my_itoa(file_header->size, file_stat.st_size, 10, 1);
+    my_itoa(file_header->mtime, file_stat.st_mtime, 10, 1);
 
-    file_header.typeflag = check_flag(file_stat);
+    file_header->typeflag = check_flag(file_stat);
 
-    if (file_header.typeflag == '2')
+    if (file_header->typeflag == '2')
     {
-        readlink(file_header.name, file_header.linkname, 100 );
+        readlink(file_header->name, file_header->linkname, 100 );
     }
 
-    my_strcpy(file_header.magic, "ustar"); // don't forget to write(x, " ", 1); at the end
-    my_strcpy(file_header.version, " "); // don't forget
+    my_strcpy(file_header->magic, "ustar"); // don't forget to write(x, " ", 1); at the end
+    my_strcpy(file_header->version, " "); // don't forget
 
     struct passwd *user_name = getpwuid(file_stat.st_uid);
-    my_strcpy(file_header.uname, user_name->pw_name);
+    my_strcpy(file_header->uname, user_name->pw_name);
 
     struct group *group_name = getgrgid(file_stat.st_gid);
-    my_strcpy(file_header.uname, group_name->gr_name);
+    my_strcpy(file_header->gname, group_name->gr_name);
 
-    my_itoa(file_header.devmajor, major(file_stat.st_dev), 10, 0);
-    my_itoa(file_header.devminor, minor(file_stat.st_dev), 10, 0);
-    my_itoa(file_header.chksum, check_sum(file_header), 10, 0);
+    my_itoa(file_header->devmajor, major(file_stat.st_dev), 10, 0);
+    my_itoa(file_header->devminor, minor(file_stat.st_dev), 10, 0);
+    my_itoa(file_header->chksum, check_sum(*file_header), 10, 0);
 
     return 0;
 }
 
+int write_header_entry(int fd_file_f, char* header_entry, int base, int is_numeric)
+{
+    if( is_numeric )
+        write(fd_file_f, "00000000000", base - 1 - my_strlen(header_entry));
+
+    write(fd_file_f, header_entry, my_strlen(header_entry));
+
+    if( is_numeric )
+        write_null(fd_file_f, 1);
+    else
+        write_null(fd_file_f, base - 1 - my_strlen(header_entry));
+}
+
 int write_file_header(int fd_file_f, struct posix_header file_header)
 {
-    write(fd_file_f, file_header.name, my_strlen(file_header.name));
-    write_null(fd_file_f, 100 - my_strlen(file_header.name));
-    write(fd_file_f, "0000000", 7-my_strlen(file_header.mode));
-    write(fd_file_f, file_header.mode, my_strlen(file_header.mode));
-    write_null(fd_file_f, 1);
-    write(fd_file_f, "0000000", 7-my_strlen(file_header.uid));
-    write(fd_file_f, file_header.uid, my_strlen(file_header.uid));
-    write_null(fd_file_f, 1);
-    write(fd_file_f, "0000000", 7-my_strlen(file_header.gid));
-    write(fd_file_f, file_header.gid, my_strlen(file_header.gid));
-    write_null(fd_file_f, 1);
-    write(fd_file_f, "00000000000", 11-my_strlen(file_header.size));
-    write(fd_file_f, file_header.size, my_strlen(file_header.size));
-    write_null(fd_file_f, 1);
-    write(fd_file_f, "00000000000", 11-my_strlen(file_header.mtime));
-    write(fd_file_f, file_header.mtime, my_strlen(file_header.mtime));
-    write_null(fd_file_f, 1);
-    write(fd_file_f, "0000000", 7-my_strlen(file_header.gid));
-    write(fd_file_f, file_header.chksum, my_strlen(file_header.chksum));
-    write_null(fd_file_f, 1);
-    write(fd_file_f, file_header.typeflag, 1);
-    write(fd_file_f, file_header.linkname, my_strlen(file_header.linkname));
-    write_null(fd_file_f, 100 - my_strlen(file_header.linkname));
-    write(fd_file_f, file_header.magic, my_strlen(file_header.magic));
+    write_header_entry(fd_file_f, file_header.name, 100, 0);
+    write_header_entry(fd_file_f, file_header.mode, 8, 1);
+    write_header_entry(fd_file_f, file_header.uid, 8, 1);
+    write_header_entry(fd_file_f, file_header.gid, 8, 1);
+    write_header_entry(fd_file_f, file_header.size, 12, 1);
+    write_header_entry(fd_file_f, file_header.mtime, 12, 1);
+    write_header_entry(fd_file_f, file_header.chksum, 8, 1);
+    char tmp[] = {file_header.typeflag, '\0'};
+    write(fd_file_f, tmp, 1);
+    write_header_entry(fd_file_f, file_header.linkname, 100, 0);
+    write(fd_file_f, file_header.magic, 5);
     write(fd_file_f, " ", 1);
-    write(fd_file_f, file_header.version, my_strlen(file_header.version));
-    write(fd_file_f, file_header.uname, my_strlen(file_header.uname));
-    write_null(fd_file_f, 32 - my_strlen(file_header.uname));
-    write(fd_file_f, file_header.gname, my_strlen(file_header.gname));
-    write_null(fd_file_f, 32 - my_strlen(file_header.gname));
-    write(fd_file_f, file_header.devmajor, my_strlen(file_header.devmajor));
-    write_null(fd_file_f, 8 - my_strlen(file_header.devmajor));
-    write(fd_file_f, file_header.devminor, my_strlen(file_header.devminor));
-    write_null(fd_file_f, 8 - my_strlen(file_header.devminor));
-    write(fd_file_f, file_header.prefix, my_strlen(file_header.prefix));
-    write_null(fd_file_f, 155 - my_strlen(file_header.prefix));
+    write(fd_file_f, file_header.version, 2);
+    write_header_entry(fd_file_f, file_header.uname, 32, 0);
+    write_header_entry(fd_file_f, file_header.gname, 32, 0);
+    write_header_entry(fd_file_f, file_header.devmajor, 8, 1);
+    write_header_entry(fd_file_f, file_header.devminor, 8, 1);
+    write_header_entry(fd_file_f, file_header.prefix, 155, 0);
 }
 
 int write_file ( int fd_file_f, char* archive_file )
@@ -163,7 +158,7 @@ int write_file ( int fd_file_f, char* archive_file )
         return -1;
     }
 
-    get_file_header(fd_archive_file, archive_file, file_header);
+    get_file_header(fd_archive_file, archive_file, &file_header);
     write_file_header(fd_file_f, file_header);
 
     close(fd_archive_file);
