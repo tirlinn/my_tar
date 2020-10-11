@@ -44,9 +44,7 @@ int count_sum(char* str)
 {
     int count = 0;
     for (int i = 0; str[i] != '\0'; i++)
-    {
         count += str[i];
-    }
     return count;
 }
 
@@ -83,10 +81,10 @@ int get_file_header(int fd_archive_file, char* archive_file, struct posix_header
     if (my_strlen(file_header->mode) == 6)
         file_header->mode[1] = '0';
 
-    my_itoa(file_header->uid, file_stat.st_uid, 10, 1);
-    my_itoa(file_header->gid, file_stat.st_gid, 10, 1);
-    my_itoa(file_header->size, file_stat.st_size, 10, 1);
-    my_itoa(file_header->mtime, file_stat.st_mtime, 10, 1);
+    my_itoa(file_header->uid, file_stat.st_uid, 8, 1);
+    my_itoa(file_header->gid, file_stat.st_gid, 8, 1);
+    my_itoa(file_header->size, file_stat.st_size, 8, 1);
+    my_itoa(file_header->mtime, file_stat.st_mtime, 8, 1);
 
     file_header->typeflag = check_flag(file_stat);
 
@@ -104,9 +102,13 @@ int get_file_header(int fd_archive_file, char* archive_file, struct posix_header
     struct group *group_name = getgrgid(file_stat.st_gid);
     my_strcpy(file_header->gname, group_name->gr_name);
 
-    my_itoa(file_header->devmajor, major(file_stat.st_dev), 10, 0);
-    my_itoa(file_header->devminor, minor(file_stat.st_dev), 10, 0);
-    my_itoa(file_header->chksum, check_sum(*file_header), 10, 0);
+    if (file_header->typeflag == ('3'||'4'))
+    {
+        my_itoa(file_header->devmajor, major(file_stat.st_rdev), 8, 0);
+        my_itoa(file_header->devminor, minor(file_stat.st_rdev), 8, 0);
+    }
+
+    my_itoa(file_header->chksum, check_sum(*file_header), 8, 0);
 
     return 0;
 }
@@ -121,7 +123,7 @@ int write_header_entry(int fd_file_f, char* header_entry, int base, int is_numer
     if( is_numeric )
         write_null(fd_file_f, 1);
     else
-        write_null(fd_file_f, base - 1 - my_strlen(header_entry));
+        write_null(fd_file_f, base - my_strlen(header_entry));
 }
 
 int write_file_header(int fd_file_f, struct posix_header file_header)
@@ -141,8 +143,8 @@ int write_file_header(int fd_file_f, struct posix_header file_header)
     write(fd_file_f, file_header.version, 2);
     write_header_entry(fd_file_f, file_header.uname, 32, 0);
     write_header_entry(fd_file_f, file_header.gname, 32, 0);
-    write_header_entry(fd_file_f, file_header.devmajor, 8, 1);
-    write_header_entry(fd_file_f, file_header.devminor, 8, 1);
+    write_header_entry(fd_file_f, file_header.devmajor, 8, 0);
+    write_header_entry(fd_file_f, file_header.devminor, 8, 0);
     write_header_entry(fd_file_f, file_header.prefix, 155, 0);
 }
 
