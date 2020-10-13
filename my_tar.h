@@ -62,14 +62,14 @@ void my_itoa(char* p1, long int p2, int base, int sign)
 
 int my_atoi(const char* input)
 {
-  int buffer = 0, cur_dig = 0, sign = 1;
+  int buffer = 0, cur_val = 0, sign = 1;
   size_t i = 0;
 
   if (input[0] == '-') {sign = -1; i++;}
   if (input[0] == '+') i++;
 
   while (input[i] != '\0') {
-    int curr_val = (int)(input[i] - '0');
+    curr_val = (int)(input[i] - '0');
     if (curr_val < 0 || curr_val > 9) return buffer;
     buffer = accumulator * 10 + curr_val;
     i++;
