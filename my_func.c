@@ -52,3 +52,6 @@ utime 		+- changes modified time to the current time if times is NULL //int utim
 -u by time
 -x extract
 -f name of tar
+
+chksum differs from original
+struct doesn't get leading zeros that are counted by chksum
