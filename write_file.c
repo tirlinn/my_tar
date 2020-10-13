@@ -83,7 +83,9 @@ int get_file_header(int fd_archive_file, char* archive_file, struct posix_header
 
     my_itoa(file_header->uid, file_stat.st_uid, 8, 1);
     my_itoa(file_header->gid, file_stat.st_gid, 8, 1);
+
     my_itoa(file_header->size, file_stat.st_size, 8, 1);
+
     my_itoa(file_header->mtime, file_stat.st_mtime, 8, 1);
 
     file_header->typeflag = check_flag(file_stat);
@@ -91,6 +93,10 @@ int get_file_header(int fd_archive_file, char* archive_file, struct posix_header
     if (file_header->typeflag == '2')
     {
         readlink(file_header->name, file_header->linkname, 100 );
+    }
+    else if (file_header->typeflag == '5' && file_header->name[my_strlen(file_header->name) - 1] != '/')
+    {
+        my_strcat(file_header->name, "/");
     }
 
     my_strcpy(file_header->magic, "ustar"); // don't forget to write(x, " ", 1); at the end
@@ -107,6 +113,13 @@ int get_file_header(int fd_archive_file, char* archive_file, struct posix_header
         my_itoa(file_header->devmajor, major(file_stat.st_rdev), 8, 0);
         my_itoa(file_header->devminor, minor(file_stat.st_rdev), 8, 0);
     }
+    else
+    {
+        file_header->devmajor[0] = '\0';
+        file_header->devminor[0] = '\0';
+    }
+
+    file_header->prefix[0] = '\0';
 
     my_itoa(file_header->chksum, check_sum(*file_header), 8, 0);
 
@@ -148,11 +161,53 @@ int write_file_header(int fd_file_f, struct posix_header file_header)
     write_header_entry(fd_file_f, file_header.prefix, 155, 0);
 }
 
+int write_file_content ( int fd_file_f, int fd_archive_file, char* size)
+{
+    char* file_content;
+    file_content = malloc(sizeof(char) * atoi(size));
+    int count = read(fd_archive_file, file_content, atoi(size));
+    write(fd_file_f, file_content, count);
+    write_null(fd_file_f, count - ( ( count / 512 ) * 512 ) );
+    free(file_content);
+    return 0;
+}
+
+int write_link_content( int fd_file_f, char* archive_file, char* size)
+{
+    char* link_content;
+    link_content = malloc(sizeof(char) * atoi(size));
+    int count = readlink(archive_file, link_content, atoi(size));
+    write(fd_file_f, link_content, count);
+    write_null(fd_file_f, count - ( ( count / 512 ) * 512 ) );
+    free(link_content);
+    return 0;
+}
+
+// int write_dir_content( int fd_file_f, char* archive_file )
+// {
+//     DIR *folder;
+//     folder = opendir(archive_file);
+//     char* entry_name
+//
+//     while (entry_name = readdir(folder))
+//     {
+//         int entry_length = my_strlen(archive_file) + my_strlen(entry_name) + 1;
+//         entry[entry_length];
+//         my_strcpy(entry, archive_file);
+//         my_strcat(entry, entry_name);
+//         write_file(entry);
+//     }
+//
+//     closedir(folder);
+// }
+
 int write_file ( int fd_file_f, char* archive_file )
 {
     struct posix_header file_header;
 
-    int fd_archive_file = open ( archive_file, O_RDONLY );
+    int fd_archive_file;
+
+    fd_archive_file = open ( archive_file, O_RDONLY );
 
     if (fd_archive_file < 0)
     {
@@ -162,6 +217,28 @@ int write_file ( int fd_file_f, char* archive_file )
 
     get_file_header(fd_archive_file, archive_file, &file_header);
     write_file_header(fd_file_f, file_header);
+
+    if (file_header.typeflag == 2)
+        write_link_content( fd_file_f, archive_file, file_header.size);
+    else if (file_header.typeflag == 5)
+    {
+        DIR *folder;
+        folder = opendir(archive_file);
+        char* entry
+
+        while (entry_name = readdir(folder))
+        {
+            int entry_length = my_strlen(archive_file) + my_strlen(entry_name) + 1;
+            entry[entry_length];
+            my_strcpy(entry, archive_file);
+            my_strcat(entry, entry_name);
+            write_file(entry);
+        }
+
+        closedir(folder);
+    }
+    else
+        write_file_content( fd_file_f, fd_archive_file, file_header.size );
 
     close(fd_archive_file);
 }
