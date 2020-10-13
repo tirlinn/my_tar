@@ -137,6 +137,8 @@ int write_header_entry(int fd_file_f, char* header_entry, int base, int is_numer
         write_null(fd_file_f, 1);
     else
         write_null(fd_file_f, base - my_strlen(header_entry));
+
+    return 0;
 }
 
 int write_file_header(int fd_file_f, struct posix_header file_header)
@@ -159,15 +161,16 @@ int write_file_header(int fd_file_f, struct posix_header file_header)
     write_header_entry(fd_file_f, file_header.devmajor, 8, 0);
     write_header_entry(fd_file_f, file_header.devminor, 8, 0);
     write_header_entry(fd_file_f, file_header.prefix, 155, 0);
+    return 0;
 }
 
 int write_file_content ( int fd_file_f, int fd_archive_file, char* size)
 {
     char* file_content;
-    file_content = malloc(sizeof(char) * atoi(size));
-    int count = read(fd_archive_file, file_content, atoi(size));
+    file_content = malloc(sizeof(char) * my_atoi(size));
+    int count = read(fd_archive_file, file_content, my_atoi(size));
     write(fd_file_f, file_content, count);
-    write_null(fd_file_f, count - ( ( count / 512 ) * 512 ) );
+    write_null(fd_file_f, 512 - ( ( count / 512 ) * 512 ) );
     free(file_content);
     return 0;
 }
@@ -175,10 +178,10 @@ int write_file_content ( int fd_file_f, int fd_archive_file, char* size)
 int write_link_content( int fd_file_f, char* archive_file, char* size)
 {
     char* link_content;
-    link_content = malloc(sizeof(char) * atoi(size));
-    int count = readlink(archive_file, link_content, atoi(size));
+    link_content = malloc(sizeof(char) * my_atoi(size));
+    int count = readlink(archive_file, link_content, my_atoi(size));
     write(fd_file_f, link_content, count);
-    write_null(fd_file_f, count - ( ( count / 512 ) * 512 ) );
+    write_null(fd_file_f, 512 - ( ( count / 512 ) * 512 ) );
     free(link_content);
     return 0;
 }
@@ -211,7 +214,7 @@ int write_file ( int fd_file_f, char* archive_file )
 
     if (fd_archive_file < 0)
     {
-        printf("Cannot open file %s.", archive_file);
+        printf("Cannot open file %s.\n", archive_file);
         return -1;
     }
 
@@ -223,16 +226,17 @@ int write_file ( int fd_file_f, char* archive_file )
     else if (file_header.typeflag == 5)
     {
         DIR *folder;
-        folder = opendir(archive_file);
-        char* entry
+        struct dirent *dir_entry;
 
-        while (entry_name = readdir(folder))
+        folder = opendir(archive_file);
+
+        while (dir_entry = readdir(folder))
         {
-            int entry_length = my_strlen(archive_file) + my_strlen(entry_name) + 1;
+            int entry_length = my_strlen(archive_file) + my_strlen(dir_entry) + 2;
             entry[entry_length];
             my_strcpy(entry, archive_file);
-            my_strcat(entry, entry_name);
-            write_file(entry);
+            my_strcat(entry, dir_entry->d_name);
+            write_file(fd_file_f, entry);
         }
 
         closedir(folder);
@@ -241,4 +245,6 @@ int write_file ( int fd_file_f, char* archive_file )
         write_file_content( fd_file_f, fd_archive_file, file_header.size );
 
     close(fd_archive_file);
+
+    return 0;
 }
