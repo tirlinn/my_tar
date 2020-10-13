@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/sysmacros.h>
+#include <dirent.h>
 
 int my_strlen(char* p1)
 {
@@ -15,11 +16,24 @@ int my_strlen(char* p1)
     return --i;
 }
 
+// void my_reverse_strcpy(char* p1, char* p2)
+// {
+//     int j = my_strlen(p1) - 1;
+//     for (int i = my_strlen(p2) - 1; i >= 0; i--)
+//         p1[j--] = p2[i];
+// }
+
 void my_strcpy(char* p1, char* p2)
 {
     char *out = p1;
     while( (*p1++ = *p2++) );
     p1 = out;
+}
+
+void my_strcat(char* p1, char* p2)
+{
+    char* out = p1 + my_strlen(p1);
+    while ( (*out++ = *p2++) );
 }
 
 void my_itoa(char* p1, long int p2, int base, int sign)
@@ -43,5 +57,23 @@ void my_itoa(char* p1, long int p2, int base, int sign)
     }
     while ( p3 );
 
-    my_strcpy(p1 , out);
+    my_reverse_strcpy(p1 , out);
+}
+
+int my_atoi(const char* input)
+{
+  int generator = 0, cur_dig = 0, sign = 1;
+  size_t i = 0;
+
+  if (input[0] == '-') {sign = -1; i++;}
+  if (input[0] == '+') i++;
+
+  while (input[i] != '\0') {
+    curr_val = (int)(input[i] - '0');
+    if (curr_val < 0 || curr_val > 9) return accumulator;
+    accumulator = accumulator * 10 + curr_val;
+    i++;
+  }
+
+  return sign * accumulator;
 }
