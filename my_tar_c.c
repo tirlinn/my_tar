@@ -26,8 +26,18 @@ int my_tar_c (char* file_f, char** archive_files, int files_count)
 
 int main()
 {
-    char* arr[10] = { "a" };
-    files_count = 1;
-    my_tar_c("test", arr, files_count);
+    char** arr = &argv[1];
+    int i;
+    for (i = 0; i < argc - 1; i++);
+    my_tar_c("test", arr, i);
     return 0;
+
+
+    "./my_tar -cf test.tar files"
+    "./my_tar -f test.tar files -c"
+    "./my_tar -cccccf test.tar files"
+    "./my_tar -f test.tar files -c files"
+    "./my_tar -crf test.tar files"
+    "./my_tar -cf test.tar files -r files"
+    "./my_tar -fx test.tar files -c "
 }

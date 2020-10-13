@@ -1,76 +1,100 @@
-int main (int argc, char** argv)
+int format_error ( char option, char* file_f)
 {
-    for (int i = 1; i < argc; i++)
+    if ( !option )
     {
-        argv
-        int j
-        bool tar_c = false;
-        bool tar_t = false;
-        bool tar_r = false;
-        bool tar_u = false;
-        bool tar_x = false;
-        bool tar_f = false;
-        int check;
-        char file_f[100];
-
-        if (tar_c == false || tar_u)
-            char** archive_files = malloc(100)
-        if (argv[i][0] == '-')
-            switch argv[i][1]
-            {
-            case c:
-            tar_c = true;
-            break;
-            case f:
-                if (argv[i][j])
-                    strcpy(file_f, &argv[i][2]);
-                    tar_f = true;
-            default:
-            break;
-            }
-        else
+        printf("You shall specify one of the -ctrux flags.");
+        return 2;
+    }
+    else if ( option )
+    {
+        switch option
         {
-            archive_files malloc(sizeof(char));
-            strcpy (archive_files[k++], argv[i]);
-        }
-
-        check = tar_c + tar_t + tar_r + tar_u + tar_x;
-        if (check == 0)
-        {
-            -ctrux use one of them;
-            return error;
-        }
-        if (check > 1)
-        {
-            you may not specify more than one -ctrux;
-            return error;
-        }
-        if (tar_f == false)
-        {
-            u need to use -f option;
-            return error;
-        }
-        if(tar_c == true)
-        {
-            func tar_c()
+        case 'c': break;
+        case 't': break;
+        case 'r': break;
+        case 'u': break;
+        case 'x': break;
+        default : return 3;
         }
     }
+
+    if ( !file_f[0] ) //Not sure
+    {
+        printf("You need to use -f option.");
+        return 4;
+    }
+
+    return 0;
 }
 
-int choose_option()
+int run_option(char option, char* file_f, char** archive_files, int files_count)
 {
+    switch option
+    {
+    case c:
+        my_tar_c(file_f, archive_files, files_count);
+        break;
+    // case t:
+    //     my_tar_t();
+    //     break;
+    // case r:
+    //     my_tar_r();
+    //     break;
+    // case u:
+    //     my_tar_u();
+    //     break;
+    // case x:
+    //     my_tar_x();
+    //     break;
+    default:
+        return 1;
+        break;
+    }
 
+    return 0;
 }
 
-int main (argc, argv)
+int main (int argc, char** argv)
 {
-    check
-    choose opiton
-    case c
-        file my_tar_c (char* file -f, char** archive_files)
-        func strcpy(asdfsadf, sadfasdf)
-    case t
-    case r
-    int tar_x()
-    return success/error
+    char file_f[100];
+    char* archive_files[10]; //We might need to malloc
+    int check, files_count = 0;
+    char option;
+
+    for (int i = 1; i < argc; i++)
+    {
+        if (argv[i][0] == '-' && argv[i][1] != '\0')
+        {
+            for (int j = 1; argv[i][j] != '\0'; j++)
+            {
+                if ( argv[i][j] == 'f' )
+                {
+                    if (argv[i][++j] != ' ')
+                        strcpy(file_f, &argv[i][j]); //Not sure
+                    else
+                        strcpy(file_f, argv[++i]);
+                }
+                else if ( option == '\0')
+                    option = argv[i][j];
+                else if ( option != argv[i][j] )
+                {
+                    printf("You should use only one -ctrux option")
+                    return 1;
+                }
+            }
+        }
+        else
+        {
+            // archive_files[k] = malloc(sizeof(char)*my_strlen(arvg[i])); Not Sure
+            strcpy (archive_files[files_count++], argv[i]);
+        }
+    }
+
+    if ( (int out = format_error ( option, file_f )) != 0)
+        return out;
+
+    if ( (int out = run_option (option, file_f, archive_files, files_count)) != 0) )
+        return out;
+
+    return 0;
 }
