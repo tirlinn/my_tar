@@ -161,6 +161,7 @@ int write_file_header(int fd_file_f, struct posix_header file_header)
     write_header_entry(fd_file_f, file_header.devmajor, 8, 0);
     write_header_entry(fd_file_f, file_header.devminor, 8, 0);
     write_header_entry(fd_file_f, file_header.prefix, 155, 0);
+    write_null(fd_file_f, 12);
     return 0;
 }
 
@@ -170,7 +171,7 @@ int write_file_content ( int fd_file_f, int fd_archive_file, char* size)
     file_content = malloc(sizeof(char) * my_atoi(size));
     int count = read(fd_archive_file, file_content, my_atoi(size));
     write(fd_file_f, file_content, count);
-    write_null(fd_file_f, 512 - ( ( count / 512 ) * 512 ) );
+    write_null(fd_file_f, 511 - ( ( count / 512 ) * 512 ) );
     free(file_content);
     return 0;
 }
@@ -181,7 +182,7 @@ int write_link_content( int fd_file_f, char* archive_file, char* size)
     link_content = malloc(sizeof(char) * my_atoi(size));
     int count = readlink(archive_file, link_content, my_atoi(size));
     write(fd_file_f, link_content, count);
-    write_null(fd_file_f, 512 - ( ( count / 512 ) * 512 ) );
+    write_null(fd_file_f, 511 - ( ( count / 512 ) * 512 ) );
     free(link_content);
     return 0;
 }
