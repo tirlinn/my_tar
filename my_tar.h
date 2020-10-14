@@ -71,7 +71,7 @@ int my_atoi(const char* input)
   while (input[i] != '\0') {
     curr_val = (int)(input[i] - '0');
     if (curr_val < 0 || curr_val > 9) return buffer;
-    buffer = accumulator * 10 + curr_val;
+    buffer = buffer * 10 + curr_val;
     i++;
   }
 
