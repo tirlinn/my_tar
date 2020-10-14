@@ -1,26 +1,26 @@
-int format_error ( char option, char* file_f)
+int format_error ( char option, char* file_f, int files_count )
 {
-    if ( !option )
+    switch ( option )
     {
+    case 'c': break;
+    case 't': break;
+    case 'r': break;
+    case 'u': break;
+    case 'x': break;
+    default :
         printf("You shall specify one of the -ctrux flags.\n");
         return 2;
     }
-    else if ( option )
-    {
-        switch ( option )
-        {
-        case 'c': break;
-        case 't': break;
-        case 'r': break;
-        case 'u': break;
-        case 'x': break;
-        default : return 3;
-        }
-    }
 
-    if ( !file_f[0] ) 
+    if ( !file_f[0] ) //Not sure
     {
         printf("You need to use -f option.\n");
+        return 3;
+    }
+
+    if ( !files_count )
+    {
+        printf("You need to specify file used by -ctrux command.\n");
         return 4;
     }
 
@@ -56,26 +56,35 @@ int run_option(char option, char* file_f, char** archive_files, int files_count)
 
 int main (int argc, char** argv)
 {
-    char file_f[100];
-    char* archive_files[10]; //We might need to malloc
+    char file_f[100] = {'\0'};
+    char* archive_files[10];
     int files_count = 0, out;
     char option = '\0';
 
+    //check format
     for (int i = 1; i < argc; i++)
     {
+        //if is option
         if (argv[i][0] == '-' && argv[i][1] != '\0')
         {
             for (int j = 1; argv[i][j] != '\0'; j++)
             {
-                if ( argv[i][j] == 'f' )
+                if ( argv[i][j] == 'f' && file_f[0] == '\0' )
                 {
                     if (argv[i][j + 1] != '\0')
-                        my_strcpy(file_f, &argv[i][j + 1]); // Not sure
-                    else
+                    {
+                        my_strcpy(file_f, &argv[i][j + 1]);
+                    }
+                    else if ( i + 1 < argc )
                     {
                         my_strcpy(file_f, argv[++i]);
-                        break;
                     }
+                    break;
+                }
+                else if ( argv[i][j] == 'f' && file_f[0] != '\0' )
+                {
+                    printf("You should use only one -f file.\n");
+                    return 5;
                 }
                 else if ( option == '\0')
                 {
@@ -88,6 +97,7 @@ int main (int argc, char** argv)
                 }
             }
         }
+        //if is filename
         else
         {
             archive_files[files_count] = malloc(sizeof(char) * ( my_strlen(argv[i]) + 1) );
@@ -95,16 +105,16 @@ int main (int argc, char** argv)
         }
     }
 
-    if ( ( out = format_error ( option, file_f ) ) != 0)
-        return out;
-
-    if ( ( out = run_option (option, file_f, archive_files, files_count) ) != 0 )
-        return out;
-
     for (int i = 0; i < files_count; i++)
     {
         free(archive_files[i]);
     }
+
+    if ( ( out = format_error ( option, file_f, files_count ) ) != 0)
+        return out;
+
+    if ( ( out = run_option (option, file_f, archive_files, files_count) ) != 0 )
+        return out;
 
     return 0;
 }

@@ -191,24 +191,6 @@ int write_link_content( int fd_file_f, char* archive_file, char* size)
     return 0;
 }
 
-// int write_dir_content( int fd_file_f, char* archive_file )
-// {
-//     DIR *folder;
-//     folder = opendir(archive_file);
-//     char* entry_name
-//
-//     while (entry_name = readdir(folder))
-//     {
-//         int entry_length = my_strlen(archive_file) + my_strlen(entry_name) + 1;
-//         entry[entry_length];
-//         my_strcpy(entry, archive_file);
-//         my_strcat(entry, entry_name);
-//         write_file(entry);
-//     }
-//
-//     closedir(folder);
-// }
-
 int write_file ( int fd_file_f, char* archive_file )
 {
     struct posix_header file_header;
@@ -230,12 +212,10 @@ int write_file ( int fd_file_f, char* archive_file )
         write_link_content( fd_file_f, archive_file, file_header.size);
     else if (file_header.typeflag == '5')
     {
-        printf("Dir.");
         DIR *folder;
         struct dirent *dir_entry;
 
         folder = opendir(archive_file);
-        printf("Dir opened.\n");
 
         while ( (dir_entry = readdir(folder)) )
         {
@@ -246,7 +226,6 @@ int write_file ( int fd_file_f, char* archive_file )
                 my_strcpy(entry, archive_file);
                 my_strcat(entry, "/");
                 my_strcat(entry, dir_entry->d_name);
-                printf("%s\n", entry);
                 write_file(fd_file_f, entry);
             }
         }
@@ -254,7 +233,6 @@ int write_file ( int fd_file_f, char* archive_file )
     }
     else
     {
-        printf("Reched.");
         write_file_content( fd_file_f, fd_archive_file, file_header.size );
     }
 

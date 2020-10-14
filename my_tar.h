@@ -16,13 +16,6 @@ int my_strlen(char* p1)
     return --i;
 }
 
-// void my_reverse_strcpy(char* p1, char* p2)
-// {
-//     int j = my_strlen(p1) - 1;
-//     for (int i = my_strlen(p2) - 1; i >= 0; i--)
-//         p1[j--] = p2[i];
-// }
-
 void my_strcpy(char* p1, char* p2)
 {
     char *out = p1;

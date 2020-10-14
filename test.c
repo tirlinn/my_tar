@@ -1,24 +1,23 @@
 #include "my_tar.h"
 
 struct posix_header
-{                           /* byte offset */
-    char name[100];         /*   0 */ //input
-    char mode[8];           /* 100 */ //open -> fstat(id) -> st_mode ????
-    char uid[8];            /* 108 */ //fstat -> user id
-    char gid[8];            /* 116 */ //fstat -> group id
-    char size[12];          /* 124 */ //fstat -> st_size
-    char mtime[12];         /* 136 */ //fstat -> st_mtime
-    char chksum[8];         /* 148 */ //???? seems to be some kind of algorithm to check the data archieved
-    char typeflag;          /* 156 */ //???? https://en.wikipedia.o#includerg/wiki/Tar_(computing)
-    char linkname[100];     /* 157 */ //For LNKTYPE and SYMTYPE
-    char magic[6];          /* 257 */ //???? ustar\0 https://www.systutorials.com/docs/linux/man/5-tar/
-    char version[2];        /* 263 */ //???? " \0"
-    char uname[32];         /* 265 */ //fstat -> getpwuid
-    char gname[32];         /* 297 */ //fstat -> getgrgid
-    char devmajor[8];       /* 329 */ //major
-    char devminor[8];       /* 337 */ //minor
-    char prefix[155];       /* 345 */ //Name after 100 chars
-                            /* 500 */ //12 empty bytes
+{
+    char name[100];
+    char mode[8];
+    char uid[8];
+    char gid[8];
+    char size[12];
+    char mtime[12];
+    char chksum[8];
+    char typeflag;
+    char linkname[100];
+    char magic[6];
+    char version[2];
+    char uname[32];
+    char gname[32];
+    char devmajor[8];
+    char devminor[8];
+    char prefix[155];
 };
 
 int write_null (int fd_file_f, int size)
