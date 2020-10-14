@@ -55,3 +55,15 @@ utime 		+- changes modified time to the current time if times is NULL //int utim
 
 chksum differs from original
 struct doesn't get leading zeros that are counted by chksum
+
+"./a.out  -cf"
+"./a.out  -c"
+"./a.out -a"
+"./a.out -f"
+"./a.out -ftest -c"
+"./a.out -ftest -c file"
+"./a.out -f test -c"
+"./a.out -fc test a fee adir z"
+"./a.out -f test a fee adir z"
+"./a.out -f test -cf a fee adir z"
+"./a.out -af test a fee adir z"

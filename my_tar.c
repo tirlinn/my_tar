@@ -2,12 +2,12 @@ int format_error ( char option, char* file_f)
 {
     if ( !option )
     {
-        printf("You shall specify one of the -ctrux flags.");
+        printf("You shall specify one of the -ctrux flags.\n");
         return 2;
     }
     else if ( option )
     {
-        switch option
+        switch ( option )
         {
         case 'c': break;
         case 't': break;
@@ -18,9 +18,9 @@ int format_error ( char option, char* file_f)
         }
     }
 
-    if ( !file_f[0] ) //Not sure
+    if ( !file_f[0] ) 
     {
-        printf("You need to use -f option.");
+        printf("You need to use -f option.\n");
         return 4;
     }
 
@@ -29,9 +29,9 @@ int format_error ( char option, char* file_f)
 
 int run_option(char option, char* file_f, char** archive_files, int files_count)
 {
-    switch option
+    switch ( option )
     {
-    case c:
+    case 'c':
         my_tar_c(file_f, archive_files, files_count);
         break;
     // case t:
@@ -58,8 +58,8 @@ int main (int argc, char** argv)
 {
     char file_f[100];
     char* archive_files[10]; //We might need to malloc
-    int check, files_count = 0;
-    char option;
+    int files_count = 0, out;
+    char option = '\0';
 
     for (int i = 1; i < argc; i++)
     {
@@ -69,32 +69,42 @@ int main (int argc, char** argv)
             {
                 if ( argv[i][j] == 'f' )
                 {
-                    if (argv[i][++j] != ' ')
-                        strcpy(file_f, &argv[i][j]); //Not sure
+                    if (argv[i][j + 1] != '\0')
+                        my_strcpy(file_f, &argv[i][j + 1]); // Not sure
                     else
-                        strcpy(file_f, argv[++i]);
+                    {
+                        my_strcpy(file_f, argv[++i]);
+                        break;
+                    }
                 }
                 else if ( option == '\0')
+                {
                     option = argv[i][j];
+                }
                 else if ( option != argv[i][j] )
                 {
-                    printf("You should use only one -ctrux option")
+                    printf("You should use only one -ctrux option.\n");
                     return 1;
                 }
             }
         }
         else
         {
-            // archive_files[k] = malloc(sizeof(char)*my_strlen(arvg[i])); Not Sure
-            strcpy (archive_files[files_count++], argv[i]);
+            archive_files[files_count] = malloc(sizeof(char) * ( my_strlen(argv[i]) + 1) );
+            my_strcpy (archive_files[files_count++], argv[i]);
         }
     }
 
-    if ( (int out = format_error ( option, file_f )) != 0)
+    if ( ( out = format_error ( option, file_f ) ) != 0)
         return out;
 
-    if ( (int out = run_option (option, file_f, archive_files, files_count)) != 0) )
+    if ( ( out = run_option (option, file_f, archive_files, files_count) ) != 0 )
         return out;
+
+    for (int i = 0; i < files_count; i++)
+    {
+        free(archive_files[i]);
+    }
 
     return 0;
 }
