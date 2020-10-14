@@ -69,9 +69,9 @@ int my_atoi(const char* input)
   if (input[0] == '+') i++;
 
   while (input[i] != '\0') {
-    curr_val = (int)(input[i] - '0');
-    if (curr_val < 0 || curr_val > 9) return buffer;
-    buffer = buffer * 10 + curr_val;
+    cur_val = (int)(input[i] - '0');
+    if (cur_val < 0 || cur_val > 9) return buffer;
+    buffer = buffer * 10 + cur_val;
     i++;
   }
 
