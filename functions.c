@@ -20,6 +20,14 @@ void my_strcat(char* p1, char* p2)
     while ( (*out++ = *p2++) );
 }
 
+int my_strcmp(char *p1, char *p2)
+{
+    int i = 0;
+    while ( (p1[i]) && p1[i] == p2[i] )
+        i++;
+    return p1[i] - p2[i];
+}
+
 void my_itoa(char* p1, long int p2, int base, int sign)
 {
     unsigned long int p3;

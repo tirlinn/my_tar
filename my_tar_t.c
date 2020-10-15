@@ -42,9 +42,7 @@ int my_tar_t (char* file_f)
     close( fd_file_f );
 
     for (int i = 0; i < count; i++)
-    {
         printf("%s\n", buffer[i].name);
-    }
 
     return 0;
 }

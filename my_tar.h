@@ -33,7 +33,7 @@ struct posix_header
 struct file_entry
 {
     char name[100];
-    char modify_time[12];
+    char mtime[12];
     char size[12];
 };
 
@@ -47,6 +47,9 @@ int my_tar_t (char* file_f);
 int list_files (int fd_file_f, struct file_entry *buffer, int *count);
 //my_tar_r.c
 int my_tar_r (char* file_f, char** archive_files, int files_count);
+//my_tar_u.c
+int is_fresh(char* archive_file, struct file_entry *buffer, int count);
+int my_tar_u(char* file_f, char** archive_files, int files_count);
 //write_file.c
 char check_flag(struct stat file_stat);
 int count_sum(char* str);
@@ -61,6 +64,7 @@ int write_file ( int fd_file_f, char* archive_file );
 int my_strlen(char* p1);
 void my_strcpy(char* p1, char* p2);
 void my_strcat(char* p1, char* p2);
+int my_strcmp(char *p1, char *p2);
 void my_itoa(char* p1, long int p2, int base, int sign);
 int my_atoi(const char* input);
 int my_oct_atoi(char* str);
