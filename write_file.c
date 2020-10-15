@@ -54,6 +54,8 @@ int get_file_header(int fd_archive_file, char* archive_file, struct posix_header
     fstat(fd_archive_file, &file_stat);
 
     my_strcpy(file_header->name, archive_file);
+    if ( ( ( file_stat.st_mode & S_IFMT ) == S_IFDIR ) && file_header->name[my_strlen(file_header->name) - 1] != '/')
+        my_strcat(file_header->name, "/");
 
     my_itoa(file_header->mode, file_stat.st_mode, 8, 1);
     file_header->mode[0] = '0';
@@ -63,20 +65,19 @@ int get_file_header(int fd_archive_file, char* archive_file, struct posix_header
     my_itoa(file_header->uid, file_stat.st_uid, 8, 1);
     my_itoa(file_header->gid, file_stat.st_gid, 8, 1);
 
-    my_itoa(file_header->size, file_stat.st_size, 8, 1);
+    if ( ( file_stat.st_mode & S_IFMT ) != S_IFDIR )
+        my_itoa(file_header->size, file_stat.st_size, 8, 1);
+    else
+        my_strcpy(file_header->size, "");
 
     my_itoa(file_header->mtime, file_stat.st_mtime, 8, 1);
 
     file_header->typeflag = check_flag(file_stat);
 
-    if (file_header->typeflag == '2')
-    {
+    if ((file_stat.st_mode & S_IFMT) == S_IFLNK)
         readlink(file_header->name, file_header->linkname, 100 );
-    }
-    else if (file_header->typeflag == '5' && file_header->name[my_strlen(file_header->name) - 1] != '/')
-    {
-        my_strcat(file_header->name, "/");
-    }
+    else
+        my_strcpy(file_header->linkname, "");
 
     my_strcpy(file_header->magic, "ustar"); // don't forget to write(x, " ", 1); at the end
     my_strcpy(file_header->version, " "); // don't forget

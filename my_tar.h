@@ -51,3 +51,6 @@ void my_strcpy(char* p1, char* p2);
 void my_strcat(char* p1, char* p2);
 void my_itoa(char* p1, long int p2, int base, int sign);
 int my_atoi(const char* input);
+int my_oct_atoi(char* str);
+//my_tar_t.c
+int my_tar_t (char* file_f);

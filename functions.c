@@ -1,3 +1,5 @@
+#include "my_tar.h"
+
 int my_strlen(char* p1)
 {
     int i = 0;
@@ -58,4 +60,16 @@ int my_atoi(const char* input)
     }
 
     return sign * buffer;
+}
+
+int my_oct_atoi(char* str)
+{
+    int res = 0;
+    int pow = 1;
+    for (int i = my_strlen(str) - 1; i >= 0; i--)
+    {
+        res += (str[i] - 48) * pow;
+        pow = pow * 8;
+    }
+    return res;
 }
