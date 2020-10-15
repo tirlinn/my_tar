@@ -30,6 +30,13 @@ struct posix_header
                             /* 500 */ //12 empty bytes
 };
 
+struct file_entry
+{
+    char name[100];
+    char modify_time[12];
+    char size[12];
+};
+
 //my_tar.c
 int format_error ( char option, char* file_f, int files_count );
 int run_option(char option, char* file_f, char** archive_files, int files_count);
@@ -37,6 +44,7 @@ int run_option(char option, char* file_f, char** archive_files, int files_count)
 int my_tar_c (char* file_f, char** archive_files, int files_count);
 //my_tar_t.c
 int my_tar_t (char* file_f);
+int list_files (int fd_file_f, struct file_entry *buffer, int *count);
 //my_tar_r.c
 int my_tar_r (char* file_f, char** archive_files, int files_count);
 //write_file.c

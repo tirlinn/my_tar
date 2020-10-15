@@ -39,12 +39,12 @@ int run_option(char option, char* file_f, char** archive_files, int files_count)
     case 't':
         my_tar_t(file_f);
         break;
-    case r:
+    case 'r':
         my_tar_r(file_f, archive_files, files_count);
         break;
-    // case u:
-    //     my_tar_u();
-    //     break;
+    case 'u':
+        my_tar_u(file_f, archive_files, files_count);
+        break;
     // case x:
     //     my_tar_x();
     //     break;
