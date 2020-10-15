@@ -50,8 +50,8 @@ MAIN = my_tar
 
 .PHONY: depend clean
 
-all:    $(MAIN)
-	@echo  Simple compiler named mycc has been compiled
+all:    $(MAIN) clean_o
+	@echo  Simple compiler named $(MAIN) has been compiled
 
 $(MAIN): $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS) #$(LFLAGS) $(LIBS)
@@ -63,10 +63,8 @@ $(MAIN): $(OBJS)
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
 
+clean_o:
+	$(RM) *.o
+
 clean:
-	$(RM) *.o *~ $(MAIN)
-
-depend: $(SRCS)
-	makedepend $(INCLUDES) $^
-
-# DO NOT DELETE THIS LINE -- make depend needs it
+	$(RM) $(MAIN)

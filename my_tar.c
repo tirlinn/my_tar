@@ -14,7 +14,7 @@ int format_error ( char option, char* file_f, int files_count )
         return 2;
     }
 
-    if ( !file_f[0] ) //Not sure
+    if ( !file_f[0] )
     {
         printf("You need to use -f option.\n");
         return 3;
