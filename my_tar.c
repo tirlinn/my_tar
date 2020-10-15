@@ -1,3 +1,5 @@
+#include "my_tar.h"
+
 int format_error ( char option, char* file_f, int files_count )
 {
     switch ( option )
@@ -105,16 +107,15 @@ int main (int argc, char** argv)
         }
     }
 
+    if ( ( out = format_error ( option, file_f, files_count ) ) == 0 )
+    {
+        out = run_option (option, file_f, archive_files, files_count);
+    }
+
     for (int i = 0; i < files_count; i++)
     {
         free(archive_files[i]);
     }
 
-    if ( ( out = format_error ( option, file_f, files_count ) ) != 0)
-        return out;
-
-    if ( ( out = run_option (option, file_f, archive_files, files_count) ) != 0 )
-        return out;
-
-    return 0;
+    return out;
 }

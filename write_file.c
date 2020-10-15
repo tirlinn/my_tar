@@ -1,25 +1,4 @@
-#include <my_tar.h>
-
-struct posix_header
-{                           /* byte offset */
-    char name[100];         /*   0 */ //input
-    char mode[8];           /* 100 */ //open -> fstat(id) -> st_mode ????
-    char uid[8];            /* 108 */ //fstat -> user id
-    char gid[8];            /* 116 */ //fstat -> group id
-    char size[12];          /* 124 */ //fstat -> st_size
-    char mtime[12];         /* 136 */ //fstat -> st_mtime
-    char chksum[8];         /* 148 */ //???? seems to be some kind of algorithm to check the data archieved
-    char typeflag;          /* 156 */ //???? https://en.wikipedia.o#includerg/wiki/Tar_(computing)
-    char linkname[100];     /* 157 */ //For LNKTYPE and SYMTYPE
-    char magic[6];          /* 257 */ //???? ustar\0 https://www.systutorials.com/docs/linux/man/5-tar/
-    char version[2];        /* 263 */ //???? " \0"
-    char uname[32];         /* 265 */ //fstat -> getpwuid
-    char gname[32];         /* 297 */ //fstat -> getgrgid
-    char devmajor[8];       /* 329 */ //major
-    char devminor[8];       /* 337 */ //minor
-    char prefix[155];       /* 345 */ //Name after 100 chars
-                            /* 500 */ //12 empty bytes
-};
+#include "my_tar.h"
 
 char check_flag(struct stat file_stat)
 {
@@ -126,6 +105,15 @@ int get_file_header(int fd_archive_file, char* archive_file, struct posix_header
     return 0;
 }
 
+int write_null (int fd_file_f, int size)
+{
+    char test[size];
+    for(int i = 0; i < size; i++)
+        test[i] = '\0';
+    write(fd_file_f, test, size);
+    return 0;
+}
+
 int write_header_entry(int fd_file_f, char* header_entry, int base, int is_numeric)
 {
     if( is_numeric )
@@ -181,7 +169,7 @@ int write_file_content ( int fd_file_f, int fd_archive_file, char* size)
 int write_link_content( int fd_file_f, char* archive_file, char* size)
 {
     int size_int = my_atoi(size);
-    char* link_content[size_int];
+    char link_content[size_int];
     int count = readlink(archive_file, link_content, size_int);
     if (count > 0)
     {
