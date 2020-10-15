@@ -35,6 +35,10 @@ int format_error ( char option, char* file_f, int files_count );
 int run_option(char option, char* file_f, char** archive_files, int files_count);
 //my_tar_c.c
 int my_tar_c (char* file_f, char** archive_files, int files_count);
+//my_tar_t.c
+int my_tar_t (char* file_f);
+//my_tar_r.c
+int my_tar_r (char* file_f, char** archive_files, int files_count);
 //write_file.c
 char check_flag(struct stat file_stat);
 int count_sum(char* str);
@@ -52,5 +56,3 @@ void my_strcat(char* p1, char* p2);
 void my_itoa(char* p1, long int p2, int base, int sign);
 int my_atoi(const char* input);
 int my_oct_atoi(char* str);
-//my_tar_t.c
-int my_tar_t (char* file_f);
