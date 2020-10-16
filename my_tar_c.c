@@ -11,6 +11,8 @@ int my_tar_c (char* file_f, char** archive_files, int files_count)
 
     write_null(fd_file_f, 1024);
 
+    chmod(file_f, my_oct_atoi("777"));
+
     close( fd_file_f );
     return 0;
 }

@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <sys/sysmacros.h>
 #include <dirent.h>
+#include <utime.h>
+#include <time.h>
 
 struct posix_header
 {                           /* byte offset */
@@ -51,7 +53,7 @@ int my_tar_r (char* file_f, char** archive_files, int files_count);
 int is_fresh(char* archive_file, struct file_entry *buffer, int count);
 int my_tar_u(char* file_f, char** archive_files, int files_count);
 //my_tar_x.c
-int correct_stats(struct stat *f_stat, struct posix_header file_header);
+int correct_stats(struct posix_header file_header);
 int fill_content(int fd_archive_file, char* content_size, int fd_file_f);
 int my_tar_x(char* file_f);
 //write_file.c
