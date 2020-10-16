@@ -156,7 +156,7 @@ int write_file_header(int fd_file_f, struct posix_header file_header)
 
 int write_file_content ( int fd_file_f, int fd_archive_file, char* size)
 {
-    int size_int = my_atoi(size);
+    int size_int = my_oct_atoi(size);
     char file_content[size_int];
     int count = read(fd_archive_file, file_content, size_int);
     if (count > 0)
@@ -169,7 +169,7 @@ int write_file_content ( int fd_file_f, int fd_archive_file, char* size)
 
 int write_link_content( int fd_file_f, char* archive_file, char* size)
 {
-    int size_int = my_atoi(size);
+    int size_int = my_oct_atoi(size);
     char link_content[size_int];
     int count = readlink(archive_file, link_content, size_int);
     if (count > 0)

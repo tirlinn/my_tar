@@ -8,7 +8,7 @@ int is_fresh(char* archive_file, struct file_entry *buffer, int count, struct st
     for (int i = 0; i < count; i++)
     {
         if ( my_strcmp(archive_file, buffer[i].name) == 0 &&
-             my_atoi(buffer[i].mtime) >= file_stat.st_mtime )
+             my_oct_atoi(buffer[i].mtime) >= file_stat.st_mtime )
         {
             close(fd_file);
             return 0;

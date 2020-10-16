@@ -77,7 +77,6 @@ int my_tar_x(char* file_f)
 
     while( read(fd_file_f, &buffer, 1) && buffer[0] != '\0' )
     {
-        printf("Tar X\n"); //DELETE
         lseek(fd_file_f, -1, SEEK_CUR);
 
         struct posix_header file_header;
