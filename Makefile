@@ -27,7 +27,7 @@ INCLUDES = -I./
 # LIBS = -lmylib -lm
 
 # define the C source files
-SRCS = my_tar.c my_tar_c.c write_file.c functions.c my_tar_t.c my_tar_r.c my_tar_u.c
+SRCS = my_tar.c my_tar_c.c write_file.c functions.c my_tar_t.c my_tar_r.c my_tar_u.c my_tar_x.c
 
 # define the C object files
 #

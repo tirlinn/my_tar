@@ -20,7 +20,7 @@ int format_error ( char option, char* file_f, int files_count )
         return 3;
     }
 
-    if ( !files_count && option != 't' )
+    if ( !files_count && option != 't' && option != 'x' )
     {
         printf("You need to specify file used by -ctrux command.\n");
         return 4;
@@ -45,12 +45,11 @@ int run_option(char option, char* file_f, char** archive_files, int files_count)
     case 'u':
         my_tar_u(file_f, archive_files, files_count);
         break;
-    // case x:
-    //     my_tar_x();
-    //     break;
+    case 'x':
+        my_tar_x(file_f);
+        break;
     default:
         return 1;
-        break;
     }
 
     return 0;
